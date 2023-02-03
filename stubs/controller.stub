@@ -1,0 +1,46 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ rootNamespace }}Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+
+class {{ class }} extends Controller
+{
+    public function index(): View
+    {
+        return view('.index', compact(''));
+    }
+
+    public function create(): View
+    {
+        return view('.create');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        return to_route('.index');
+    }
+
+    public function show($id): View
+    {
+        return view('.show', compact(''));
+    }
+
+    public function edit($id): View
+    {
+        return view('.edit', compact(''));
+    }
+
+    public function update(Request $request, $id): RedirectResponse
+    {
+        return to_route('.index');
+    }
+
+    public function destroy($id): RedirectResponse
+    {
+        return to_route('.index');
+    }
+}

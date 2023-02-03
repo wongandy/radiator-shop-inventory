@@ -33,11 +33,6 @@ class BranchController extends Controller
         return to_route('branches.index')->with('success', 'Branch created successfully!');
     }
 
-    public function show(Branch $branch)
-    {
-        //
-    }
-
     public function edit(Branch $branch): View
     {
         return view('branches.edit', compact('branch'));
@@ -54,7 +49,7 @@ class BranchController extends Controller
         return to_route('branches.index')->with('success', 'Branch updated successfully!');
     }
 
-    public function destroy(Branch $branch)
+    public function destroy(Branch $branch): RedirectResponse
     {
         $branch->delete();
 

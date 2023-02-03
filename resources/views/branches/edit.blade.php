@@ -33,8 +33,9 @@
                 <x-text-input type="text"
                          id="name"
                          name="name"
-                         class="block w-full"
+                         class="block w-full {{ $errors->has('name') ? 'border-red-500' : '' }}"
                          value="{{ old('name', $branch->name) }}"
+                         autofocus
                          />
                 <x-input-error :messages="$errors->get('name')" class="mt-2" />
             </div>
