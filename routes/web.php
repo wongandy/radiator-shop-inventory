@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,10 +34,6 @@ Route::middleware('auth')->group(function () {
     Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    Route::get('branches', [BranchController::class, 'index'])->name('branches.index');
-    Route::get('branches/create', [BranchController::class, 'create'])->name('branches.create');
-    Route::get('branches/{branch}/edit', [BranchController::class, 'edit'])->name('branches.edit');
-    Route::post('branches', [BranchController::class, 'store'])->name('branches.store');
-    Route::put('branches/{branch}', [BranchController::class, 'update'])->name('branches.update');
-    Route::delete('branches/{branch}', [BranchController::class, 'destroy'])->name('branches.destroy');
+    Route::resource('branches', BranchController::class)->except('show');
+    Route::resource('products', ProductController::class);
 });

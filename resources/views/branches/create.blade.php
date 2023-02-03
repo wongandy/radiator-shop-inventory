@@ -26,14 +26,15 @@
 
         <form action="{{ route('branches.store') }}" method="POST">
             @csrf
-
+            
             <div class="mt-4">
                 <x-input-label for="name" :value="__('Name')"/>
                 <x-text-input type="text"
                          id="name"
                          name="name"
-                         class="block w-full"
+                         class="block w-full {{ $errors->has('name') ? 'border-red-500' : '' }}"
                          value="{{ old('name') }}"
+                         autofocus
                          />
                 <x-input-error :messages="$errors->get('name')" class="mt-2" />
             </div>
