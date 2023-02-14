@@ -8,6 +8,7 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @livewireStyles
         <!-- Scripts -->
         <script src="{{ asset('js/init-alpine.js') }}"></script>
 </head>
@@ -36,5 +37,7 @@
         </main>
     </div>
 </div>
+@livewireScripts
+@stack('scripts')
 </body>
 </html>
