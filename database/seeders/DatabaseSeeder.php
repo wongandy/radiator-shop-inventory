@@ -36,5 +36,20 @@ class DatabaseSeeder extends Seeder
             'price' => 13500,
             'notes' => 'test note',
         ]);
+
+        \App\Models\Product::factory()->create([
+            'make' => 103,
+            'brand' => 'chevrolet',
+            'model' => 'aveo 1.6',
+            'year_start' => 2004,
+            'year_end' => 2009,
+            'transmission' => 'M/T',
+            'thickness_number' => 16,
+            'thickness' => 'mm',
+            'stock_number' => '2837mt',
+            'enterex_price' => 20.99,
+            'price' => 4800,
+            'notes' => 'test note2',
+        ]);
     }
 }
