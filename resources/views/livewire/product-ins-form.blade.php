@@ -19,7 +19,7 @@
     @endif
 
     <div class="p-4 bg-white rounded-lg shadow-md">
-        <form action="{{ route('product-ins.store') }}" wire:submit.prevent="save" method="POST">
+        <form wire:submit.prevent="save" method="POST">
             @csrf
 
             <div class="mt-4">
@@ -29,7 +29,6 @@
                         id="date_received"
                         name="date_received"
                         class="block w-full {{ $errors->has('productIn.date_received') ? 'border-red-500' : '' }}"
-                        value="{{ now()->toDateString() }}"
                         />
                 <x-input-error :messages="$errors->get('productIn.date_received')" class="mt-2" />
             </div>
@@ -43,9 +42,9 @@
                         class="{{ $errors->has('productIn.branch_id') ? 'border-red-500' : '' }}"
                         >
                         <option value="">-- Select a branch --</option>
-                    @foreach ($branches as $branch)
-                        <option value="{{ $branch->id }}" @selected(old('branch_id') == $branch->id)>{{ $branch->name }}</option>
-                    @endforeach
+                        @foreach ($branches as $branch)
+                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                        @endforeach
                 </x-select>
                 <x-input-error :messages="$errors->get('productIn.branch_id')" class="mt-2" />
             </div>
@@ -68,14 +67,14 @@
                                     >
                                     <option value="">-- Select a product --</option>
                                     @foreach ($products as $product)
-                                        <option value="{{ $product->id }}" @selected(old('product_id[]') == $product->detail)>{{ $product->detail }}</option>
+                                        <option value="{{ $product->id }}">{{ $product->detail }}</option>
                                     @endforeach
                                 </x-select>
                                 <x-input-error :messages="$errors->get('productInProducts.' . $index . '.product_id')" class="mt-2" />
                             </div>
                         </div>
 
-                        <div class="w-1/3 ml-2 w-full">
+                        <div class="w-1/3 mr-2 w-full">
                             <div class="mt-4">
                                 <x-input-label for="quantity_{{ $index }}" :value="__('Quantity')"/>
                                 <x-text-input type="number"
@@ -83,17 +82,17 @@
                                         wire:model.defer="productInProducts.{{ $index }}.quantity"
                                         id="quantity_{{ $index }}"
                                         class="block w-full {{ $errors->has('productInProducts.' . $index . '.quantity') ? 'border-red-500' : '' }}"
-                                        value="{{ old('quantity[]') }}"
+                                        min="1"
                                         />
                                 <x-input-error :messages="$errors->get('productInProducts.' . $index . '.quantity')" class="mt-2" />
                             </div>
                         </div>
 
-                        <div class="w-1/3 ml-2 w-full">
+                        <div class="w-1/3 mr-2 w-full">
                             <div class="mt-4 mb-4">
-                                    <x-danger-button class="mt-7" type="button" wire:click="removeProductIn({{ $index }})">
-                                        {{ __('Remove') }}
-                                    </x-danger-button>
+                                <x-danger-button class="mt-7" type="button" wire:click="removeProductIn({{ $index }})">
+                                    {{ __('Remove') }}
+                                </x-danger-button>
                             </div>
                         </div>
                     </div>

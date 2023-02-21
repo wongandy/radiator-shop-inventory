@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __('Product in') }}
+        {{ __('Product out') }}
     </x-slot>
 
-    @livewire('product-ins')
+    @livewire('product-outs')
 </x-app-layout>

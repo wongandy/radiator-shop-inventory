@@ -22,18 +22,8 @@ class ProductInController extends Controller
         return view('product-ins.create');
     }
 
-    public function show($id): View
-    {
-        return view('.show', compact(''));
-    }
-
     public function edit(ProductIn $productIn): View
     {
         return view('product-ins.edit', compact('productIn'));
-    }
-
-    public function destroy($id): RedirectResponse
-    {
-        return to_route('.index');
     }
 }

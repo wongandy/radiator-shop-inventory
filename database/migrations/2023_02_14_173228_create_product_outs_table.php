@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('product_ins', function (Blueprint $table) {
+        Schema::create('product_outs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('branch_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->text('notes')->nullable();
-            $table->date('date_received');
+            $table->date('date_issued');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_ins');
+        Schema::dropIfExists('product_outs');
     }
 };

@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class ProductIn extends Model
+class ProductOut extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['branch_id', 'user_id', 'notes', 'date_received'];
+    protected $fillable = ['branch_id', 'user_id', 'notes', 'date_issued'];
 
     protected static function booted()
     {
@@ -24,7 +24,7 @@ class ProductIn extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'product_in_details')->withPivot('quantity');
+        return $this->belongsToMany(Product::class, 'product_out_details')->withPivot('quantity', 'price_sold')->using(ProductOutDetail::class);
     }
 
     public function branch(): BelongsTo

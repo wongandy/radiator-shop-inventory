@@ -6,34 +6,17 @@ use App\Models\Branch;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\ProductIn;
+use App\Actions\AdjustTotalQuantity;
+use App\Actions\DecreaseQuantityAction;
+use App\Actions\IncreaseQuantityAction;
 
 class ProductInsForm extends Component
 {
     public $products;
     public $branches;
+    public $type;
     public $productInProducts = [];
     public ProductIn $productIn;
-
-    public function mount(ProductIn $productIn)
-    {
-        $this->products = Product::get();
-        $this->branches = Branch::get();
-
-        $this->productIn = $productIn;
-        
-        $this->productIn->date_received = $productIn->date_received?? now()->toDateString();
-        
-        if ($this->productIn->products->isEmpty()) {
-            $this->productInProducts[] = ['product_id' => '', 'quantity' => ''];
-        } else {
-            foreach ($this->productIn->products as $product) {
-                $this->productInProducts[] = [
-                    'product_id' => $product->pivot->product_id, 
-                    'quantity' => $product->pivot->quantity
-                ];
-            }
-        }
-    }
 
     protected $rules = [
         'productIn.date_received' => ['required', 'date'],
@@ -51,6 +34,27 @@ class ProductInsForm extends Component
         'productInProducts.*.quantity.min' => 'The quantity must be at least 1.',
         'productInProducts.*.quantity.integer' => 'The quantity must be a valid number.',
     ];
+    
+    public function mount(ProductIn $productIn)
+    {
+        $this->products = Product::all();
+        $this->branches = Branch::all();
+
+        $this->productIn = $productIn;
+        
+        $this->productIn->date_received = $productIn->date_received?? now()->toDateString();
+        
+        if ($this->productIn->products->isEmpty()) {
+            $this->productInProducts[] = ['product_id' => '', 'quantity' => ''];
+        } else {
+            foreach ($this->productIn->products as $product) {
+                $this->productInProducts[] = [
+                    'product_id' => $product->pivot->product_id, 
+                    'quantity' => $product->pivot->quantity
+                ];
+            }
+        }
+    }
 
     public function render()
     {
@@ -71,6 +75,8 @@ class ProductInsForm extends Component
         unset($this->productInProducts[$index]);
 
         $this->productInProducts = array_values($this->productInProducts);
+
+        $this->resetValidation();
     }
 
     public function save()
@@ -78,13 +84,29 @@ class ProductInsForm extends Component
         $this->validate();
 
         $this->productIn->save();
-
+        
         $products = collect($this->productInProducts)->mapWithKeys(function ($product) {
             return [$product['product_id'] => ['quantity' => $product['quantity']]];
         });
-
+        
         $this->productIn->products()->sync($products);
 
+        if ($this->type == 'edit') {
+            foreach ($this->productIn->products as $product) {
+                (new DecreaseQuantityAction())->execute(
+                    $this->productIn->branch_id, 
+                    $product->pivot->product_id, 
+                    $product->pivot->quantity);
+            }
+        }
+        
+        foreach ($this->productInProducts as $productInProduct) {            
+            (new IncreaseQuantityAction())->execute(
+                $this->productIn->branch_id, 
+                $productInProduct['product_id'], 
+                $productInProduct['quantity']);
+        }
+        
         return to_route('product-ins.index')->with('success', 'Product in saved successfully!');
     }
 }

@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProductInController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductInController;
+use App\Http\Controllers\ProductOutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,5 +38,6 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('branches', BranchController::class)->except('show');
     Route::resource('products', ProductController::class);
-    Route::resource('product-ins', ProductInController::class);
+    Route::resource('product-ins', ProductInController::class)->only('index', 'create', 'edit');
+    Route::resource('product-outs', ProductOutController::class)->only('index', 'create', 'edit');
 });
