@@ -2,16 +2,16 @@
 
 namespace App\Http\Livewire;
 
-use App\Actions\DecreaseQuantityAction;
 use App\Models\Branch;
 use Livewire\Component;
-use App\Models\ProductIn;
+use App\Models\ProductOut;
 use Livewire\WithPagination;
+use App\Actions\IncreaseQuantityAction;
 
-class ProductIns extends Component
+class ProductOuts extends Component
 {
     use WithPagination;
-
+    
     public $searchQuery;
     public $searchBranch;
     public $branches;
@@ -25,11 +25,11 @@ class ProductIns extends Component
 
     public function render()
     {
-        $productIns = ProductIn::with('branch', 'products')
+        $productOuts = ProductOut::with('branch', 'products')
                             ->when($this->searchQuery != '', function ($query) {
                                 $query->where(function ($query) {
                                     $query->where('notes', 'like', '%' . $this->searchQuery . '%')
-                                        ->orWhere('date_received', 'like', '%' . $this->searchQuery . '%');
+                                        ->orWhere('date_issued', 'like', '%' . $this->searchQuery . '%');
                                 })
                                 ->orWhereHas('products', function ($query) {
                                     $query->where('stock_number', 'like', '%' . $this->searchQuery . '%');
@@ -40,24 +40,24 @@ class ProductIns extends Component
                             })
                             ->latest()->paginate(5);
 
-        return view('livewire.product-ins', [
-            'productIns' => $productIns
+        return view('livewire.product-outs', [
+            'productOuts' => $productOuts
         ]);
     }
 
-    public function deleteProductIn($productInId)
+    public function deleteProductOut($productOutId)
     {
-        $productIn = ProductIn::find($productInId);
-
-        foreach ($productIn->products as $product) {
-            (new DecreaseQuantityAction())->execute(
-                $productIn->branch_id, 
+        $productOut = ProductOut::find($productOutId);
+        
+        foreach ($productOut->products as $product) {
+            (new IncreaseQuantityAction())->execute(
+                $productOut->branch_id, 
                 $product->pivot->product_id, 
                 $product->pivot->quantity);
         }
 
-        $productIn->delete();
+        $productOut->delete();
 
-        session()->flash('success', 'Product in deleted successfully!');
+        session()->flash('success', 'Product out deleted successfully!');
     }
 }

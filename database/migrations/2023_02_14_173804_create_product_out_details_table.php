@@ -13,14 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('product_ins', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('branch_id')->constrained();
-            $table->foreignId('user_id')->constrained();
-            $table->text('notes')->nullable();
-            $table->date('date_received');
+        Schema::create('product_out_details', function (Blueprint $table) {
+            $table->foreignId('product_out_id')->constrained();
+            $table->foreignId('product_id')->constrained();
+            $table->integer('quantity');
+            $table->integer('price_sold');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_ins');
+        Schema::dropIfExists('product_out_details');
     }
 };

@@ -67,4 +67,14 @@ class Product extends Model
     {
         return $this->belongsToMany(ProductIn::class, 'product_in_details');
     }
+
+    public function productOuts(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductOut::class, 'product_out_details')->using(ProductOutDetail::class);
+    }
+
+    public function branches(): BelongsToMany
+    {
+        return $this->belongsToMany(Branch::class);
+    }
 }
