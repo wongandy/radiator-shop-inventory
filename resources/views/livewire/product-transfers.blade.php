@@ -19,53 +19,47 @@
     @endif
         
     <div class="mb-4">
-        <x-link href="{{ route('product-ins.create') }}">Create</x-link>
+        <x-link href="{{ route('product-transfers.create') }}">Create</x-link>
         <x-text-input wire:model="searchQuery" 
                         type="text"
                         id="name"
                         name="name"
                         placeholder="Search"
                         />
-        <select wire:model="searchBranch">
-            <option value="">-- Select a branch --</option>
-            @foreach ($branches as $branch)
-                <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-            @endforeach
-        </select>
     </div>
-        
+
     <div class="overflow-hidden mb-8 w-full rounded-lg border shadow-xs">
         <div class="overflow-x-auto w-full">
             <table class="w-full whitespace-no-wrap">
                 <thead>
                 <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase bg-gray-50 border-b">
-                    <th class="px-4 py-3">Date received</th>
-                    <th class="px-4 py-3">Branch</th>
+                    <th class="px-4 py-3">Date transferred</th>
+                    <th class="px-4 py-3">From/to</th>
                     <th class="px-4 py-3">Details</th>
                     <th class="px-4 py-3">Notes</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody class="bg-white divide-y">
-                    @foreach($productIns as $productIn)
+                    @foreach($productTransfers as $productTransfer)
                         <tr class="text-gray-700">
                             <td class="px-4 py-3 text-sm">
-                                {{ $productIn->date_received }}
+                                {{ $productTransfer->date_transferred }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                {{ $productIn->branch->name }}
+                                {{ $productTransfer->sendingBranch->name }}/{{ $productTransfer->receivingBranch->name }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                @foreach ($productIn->products as $product)
+                                @foreach ($productTransfer->products as $product)
                                     <p>{{ $product->pivot->quantity }} x {{ $product->detail }}</p>
                                 @endforeach
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                {{ $productIn->notes }}
+                                {{ $productTransfer->notes }}
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                <x-link href="{{ route('product-ins.edit', $productIn) }}">Edit</x-link>
-                                <x-danger-button wire:click="deleteProductIn({{ $productIn->id }})" 
+                                <x-link href="{{ route('product-transfers.edit', $productTransfer) }}">Edit</x-link>
+                                <x-danger-button wire:click="deleteProductTransfer({{ $productTransfer->id }})" 
                                                 type="button"
                                                 class=""
                                                 onclick="return confirm('Are you sure to delete?') || event.stopImmediatePropagation();"
@@ -79,7 +73,7 @@
             </table>
 
             <div class="px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase bg-gray-50 border-t sm:grid-cols-9">
-                {{ $productIns->links() }}
+                {{ $productTransfers->links() }}
             </div>
         </div>
     </div>

@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('product_out_details', function (Blueprint $table) {
+        Schema::create('product_transfers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_out_id')->constrained();
-            $table->foreignId('branch_id')->constrained();
-            $table->foreignId('product_id')->constrained();
-            $table->integer('quantity');
-            $table->integer('price_sold');
+            $table->foreignId('sending_branch_id')->references('id')->on('branches');
+            $table->foreignId('receiving_branch_id')->references('id')->on('branches');
+            $table->text('notes')->nullable();
+            $table->date('date_transferred');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_out_details');
+        Schema::dropIfExists('product_transfers');
     }
 };

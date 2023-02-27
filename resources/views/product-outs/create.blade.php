@@ -3,5 +3,5 @@
         {{ __('Create product out') }}
     </x-slot>
 
-    @livewire('product-outs-form', ['type' => 'create'])
+    @livewire('product-outs-create')
 </x-app-layout>

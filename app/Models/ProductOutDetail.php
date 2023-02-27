@@ -10,6 +10,8 @@ class ProductOutDetail extends Pivot
 {
     use HasFactory;
 
+    protected $table = 'product_out_details';
+
     protected function priceSold(): Attribute
     {
         return Attribute::make(

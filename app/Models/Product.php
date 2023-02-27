@@ -73,6 +73,11 @@ class Product extends Model
         return $this->belongsToMany(ProductOut::class, 'product_out_details')->using(ProductOutDetail::class);
     }
 
+    public function productTransfers(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductTransfer::class, 'product_transfer_details');
+    }
+
     public function branches(): BelongsToMany
     {
         return $this->belongsToMany(Branch::class);
