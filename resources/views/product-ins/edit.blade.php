@@ -3,5 +3,5 @@
         {{ __('Edit product in') }}
     </x-slot>
 
-    @livewire('product-ins-form', ['productIn' => $productIn, 'type' => 'edit'])
+    @livewire('product-ins-edit', ['productIn' => $productIn])
 </x-app-layout>

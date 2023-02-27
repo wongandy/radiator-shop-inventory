@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductInController;
 use App\Http\Controllers\ProductOutController;
+use App\Http\Controllers\ProductTransferController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,4 +41,5 @@ Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('product-ins', ProductInController::class)->only('index', 'create', 'edit');
     Route::resource('product-outs', ProductOutController::class)->only('index', 'create', 'edit');
+    Route::resource('product-transfers', ProductTransferController::class)->only('index', 'create', 'edit');
 });

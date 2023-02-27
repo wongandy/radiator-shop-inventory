@@ -128,7 +128,7 @@
 
             <div class="mt-4">
                 <x-input-label for="notes" :value="__('Notes')"/>
-                <x-textarea wire:model="productOut.notes" id="notes" name="notes" class="block w-full">{{ old('notes') }}</x-textarea>
+                <x-textarea wire:model="productOut.notes" id="notes" name="notes" class="block w-full"></x-textarea>
             </div>
 
             <div class="mt-4">

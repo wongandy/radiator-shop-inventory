@@ -15,6 +15,7 @@
                     <p class="text-sm text-gray-600">{{ session('warning') }}</p>
                 </div>
             </div>
+            
         </div>
     @endif
 
@@ -23,74 +24,90 @@
             @csrf
 
             <div class="mt-4">
-                <x-input-label for="date_received" :value="__('Date')"/>
+                <x-input-label for="date_transferred" :value="__('Date transferred')"/>
                 <x-text-input type="date"
-                        wire:model="productIn.date_received"
-                        id="date_received"
-                        name="date_received"
-                        class="block w-full {{ $errors->has('productIn.date_received') ? 'border-red-500' : '' }}"
+                        wire:model="productTransfer.date_transferred"
+                        id="date_transferred"
+                        name="date_transferred"
+                        class="block w-full {{ $errors->has('productTransfer.date_transferred') ? 'border-red-500' : '' }}"
                         />
-                <x-input-error :messages="$errors->get('productIn.date_received')" class="mt-2" />
+                <x-input-error :messages="$errors->get('productTransfer.date_transferred')" class="mt-2" />
             </div>
             
             <div class="mt-4">
-                <x-input-label for="branch_id" :value="__('Branch')"/>
+                <x-input-label for="sending_branch_id" :value="__('Sending branch')"/>
 
-                <x-select wire:model="productIn.branch_id"
-                        name="branch_id" 
-                        id="branch_id" 
-                        class="{{ $errors->has('productIn.branch_id') ? 'border-red-500' : '' }}"
+                <x-select wire:model="productTransfer.sending_branch_id"
+                        name="sending_branch_id" 
+                        id="sending_branch_id" 
+                        class="{{ $errors->has('productTransfer.sending_branch_id') ? 'border-red-500' : '' }}"
                         >
                         <option value="">-- Select a branch --</option>
                         @foreach ($branches as $branch)
                             <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                         @endforeach
                 </x-select>
-                <x-input-error :messages="$errors->get('productIn.branch_id')" class="mt-2" />
+                <x-input-error :messages="$errors->get('productTransfer.sending_branch_id')" class="mt-2" />
+            </div>
+
+            <div class="mt-4">
+                <x-input-label for="receiving_branch_id" :value="__('Receiving branch')"/>
+
+                <x-select wire:model="productTransfer.receiving_branch_id"
+                        name="receiving_branch_id" 
+                        id="receiving_branch_id" 
+                        class="{{ $errors->has('productTransfer.receiving_branch_id') ? 'border-red-500' : '' }}"
+                        >
+                        <option value="">-- Select a branch --</option>
+                        @foreach ($branches as $branch)
+                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                        @endforeach
+                </x-select>
+                <x-input-error :messages="$errors->get('productTransfer.receiving_branch_id')" class="mt-2" />
             </div>
                     
             <div class="mt-4 p-4 bg-gray-50 rounded-lg shadow-xs"> 
                 <div class="mt-4">
-                    <x-secondary-button wire:click="addProductIn" id="add-product-in-btn">
+                    <x-secondary-button wire:click="addProductTransfer">
                         {{ __('Add row') }}
                     </x-secondary-button>
                 </div>
-                @foreach ($productInProducts as $index => $productInProduct)
+                @foreach ($productTransferProducts as $index => $productTransferProduct)
                     <div class="flex">
-                        <div class="w-1/3 mr-2 w-full">
+                        <div class="w-1/4 mr-2 w-full">
                             <div class="mt-4">
                                 <x-input-label for="product_id_{{ $index }}" :value="__('Product')"/>
-                                <x-select name="product_ins[{{ $index }}][product_id]"
-                                    wire:model="productInProducts.{{ $index }}.product_id" 
+                                <x-select name="product_transfers[{{ $index }}][product_id]"
+                                    wire:model="productTransferProducts.{{ $index }}.product_id" 
                                     id="product_id_{{ $index }}" 
-                                    class="{{ $errors->has('productInProducts.' . $index . '.product_id') ? 'border-red-500' : '' }}"
+                                    class="{{ $errors->has('productTransferProducts.' . $index . '.product_id') ? 'border-red-500' : '' }}"
                                     >
                                     <option value="">-- Select a product --</option>
                                     @foreach ($products as $product)
                                         <option value="{{ $product->id }}">{{ $product->detail }}</option>
                                     @endforeach
                                 </x-select>
-                                <x-input-error :messages="$errors->get('productInProducts.' . $index . '.product_id')" class="mt-2" />
+                                <x-input-error :messages="$errors->get('productTransferProducts.' . $index . '.product_id')" class="mt-2" />
                             </div>
                         </div>
 
-                        <div class="w-1/3 mr-2 w-full">
+                        <div class="w-1/4 mr-2 w-full">
                             <div class="mt-4">
                                 <x-input-label for="quantity_{{ $index }}" :value="__('Quantity')"/>
                                 <x-text-input type="number"
-                                        name="product_ins[{{ $index }}][quantity]"
-                                        wire:model.defer="productInProducts.{{ $index }}.quantity"
+                                        name="product_transfers[{{ $index }}][quantity]"
+                                        wire:model="productTransferProducts.{{ $index }}.quantity"
                                         id="quantity_{{ $index }}"
-                                        class="block w-full {{ $errors->has('productInProducts.' . $index . '.quantity') ? 'border-red-500' : '' }}"
+                                        class="block w-full {{ $errors->has('productTransferProducts.' . $index . '.quantity') ? 'border-red-500' : '' }}"
                                         min="1"
                                         />
-                                <x-input-error :messages="$errors->get('productInProducts.' . $index . '.quantity')" class="mt-2" />
+                                <x-input-error :messages="$errors->get('productTransferProducts.' . $index . '.quantity')" class="mt-2" />
                             </div>
                         </div>
 
-                        <div class="w-1/3 mr-2 w-full">
+                        <div class="w-1/4 mr-2 w-full">
                             <div class="mt-4 mb-4">
-                                <x-danger-button class="mt-7" type="button" wire:click="removeProductIn({{ $index }})">
+                                <x-danger-button class="mt-7" type="button" wire:click="removeProductTransfer({{ $index }})">
                                     {{ __('Remove') }}
                                 </x-danger-button>
                             </div>
@@ -101,7 +118,7 @@
 
             <div class="mt-4">
                 <x-input-label for="notes" :value="__('Notes')"/>
-                <x-textarea wire:model="productIn.notes" id="notes" name="notes" class="block w-full"></x-textarea>
+                <x-textarea wire:model="productTransfer.notes" id="notes" name="notes" class="block w-full"></x-textarea>
             </div>
 
             <div class="mt-4">

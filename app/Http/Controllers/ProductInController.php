@@ -5,10 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\ProductIn;
 use Illuminate\View\View;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProductInRequest;
-use Illuminate\Http\RedirectResponse;
-use App\Models\Branch;
-use App\Models\Product;
 
 class ProductInController extends Controller
 {

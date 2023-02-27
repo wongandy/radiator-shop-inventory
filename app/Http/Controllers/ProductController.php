@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProductRequest;
 use App\Models\Product;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use App\Http\Requests\ProductRequest;
+use Illuminate\Http\RedirectResponse;
 
 class ProductController extends Controller
 {

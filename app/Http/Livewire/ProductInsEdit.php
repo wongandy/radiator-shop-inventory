@@ -6,15 +6,13 @@ use App\Models\Branch;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\ProductIn;
-use App\Actions\AdjustTotalQuantity;
 use App\Actions\DecreaseQuantityAction;
 use App\Actions\IncreaseQuantityAction;
 
-class ProductInsForm extends Component
+class ProductInsEdit extends Component
 {
     public $products;
     public $branches;
-    public $type;
     public $productInProducts = [];
     public ProductIn $productIn;
 
@@ -42,17 +40,11 @@ class ProductInsForm extends Component
 
         $this->productIn = $productIn;
         
-        $this->productIn->date_received = $productIn->date_received?? now()->toDateString();
-        
-        if ($this->productIn->products->isEmpty()) {
-            $this->productInProducts[] = ['product_id' => '', 'quantity' => ''];
-        } else {
-            foreach ($this->productIn->products as $product) {
-                $this->productInProducts[] = [
-                    'product_id' => $product->pivot->product_id, 
-                    'quantity' => $product->pivot->quantity
-                ];
-            }
+        foreach ($this->productIn->products as $product) {
+            $this->productInProducts[] = [
+                'product_id' => $product->pivot->product_id, 
+                'quantity' => $product->pivot->quantity
+            ];
         }
     }
 
@@ -91,13 +83,11 @@ class ProductInsForm extends Component
         
         $this->productIn->products()->sync($products);
 
-        if ($this->type == 'edit') {
-            foreach ($this->productIn->products as $product) {
-                (new DecreaseQuantityAction())->execute(
-                    $this->productIn->branch_id, 
-                    $product->pivot->product_id, 
-                    $product->pivot->quantity);
-            }
+        foreach ($this->productIn->products as $product) {
+            (new DecreaseQuantityAction())->execute(
+                $this->productIn->branch_id, 
+                $product->pivot->product_id, 
+                $product->pivot->quantity);
         }
         
         foreach ($this->productInProducts as $productInProduct) {            
@@ -107,6 +97,6 @@ class ProductInsForm extends Component
                 $productInProduct['quantity']);
         }
         
-        return to_route('product-ins.index')->with('success', 'Product in saved successfully!');
+        return to_route('product-ins.index')->with('success', 'Product in edited successfully!');
     }
 }

@@ -6,15 +6,13 @@ use App\Models\Branch;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\ProductOut;
-use App\Actions\DecreaseQuantityAction;
-use App\Actions\IncreaseQuantityAction;
 use App\Models\BranchProduct;
+use App\Actions\DecreaseQuantityAction;
 
-class ProductOutsForm extends Component
+class ProductOutsCreate extends Component
 {
     public $products;
     public $branches;
-    public $type;
     public $productOutProducts = [];
     public ProductOut $productOut;
 
@@ -43,20 +41,8 @@ class ProductOutsForm extends Component
         $this->products = Product::all();
         $this->branches = Branch::all();
         $this->productOut = $productOut;
-        $this->productOut->date_issued = $productOut->date_issued ?? now()->toDateString();
-
-        if ($this->productOut->products->isEmpty()) {
-            $this->productOutProducts[] = ['product_id' => '', 'quantity' => '', 'price' => ''];
-        } else {
-            foreach ($this->productOut->products as $product) {
-                $this->productOutProducts[] = [
-                    'product_id' => $product->pivot->product_id,
-                    'price' => $product->price,
-                    'quantity' => $product->pivot->quantity,
-                    'price_sold' => $product->pivot->price_sold,
-                ];
-            }
-        }
+        $this->productOut->date_issued = now()->toDateString();
+        $this->productOutProducts[] = ['product_id' => '', 'quantity' => '', 'price' => ''];
     }
 
     public function render()
@@ -96,24 +82,9 @@ class ProductOutsForm extends Component
                     ->first();
                     
                 if ($branchProduct) {
-                    if ($this->type == 'create') {
-                        $this->rules['productOutProducts.' . $index . '.quantity'] = ['required', 'integer', 'max:' . $branchProduct->quantity];
-                        $this->messages['productOutProducts.' . $index . '.quantity.required'] = 'The quantity field is required.';                
-                        $this->messages['productOutProducts.' . $index . '.quantity.max'] = 'The quantity remaining is ' . $branchProduct->quantity . '.';
-                    }
-                    else if ($this->type == 'edit') {
-                        foreach ($this->productOut->products as $product) {
-                            if ($product->pivot->product_id == $productId) {
-                                $this->rules['productOutProducts.' . $index . '.quantity'] = ['required', 'integer', 'max:' . $branchProduct->quantity + $product->pivot->quantity];
-                                $this->messages['productOutProducts.' . $index . '.quantity.required'] = 'The quantity field is required.';                
-                                $this->messages['productOutProducts.' . $index . '.quantity.max'] = 'The quantity remaining is ' . $branchProduct->quantity + $product->pivot->quantity . '.';
-                            } else {
-                                $this->rules['productOutProducts.' . $index . '.quantity'] = ['required', 'integer', 'max:' . $branchProduct->quantity];
-                                $this->messages['productOutProducts.' . $index . '.quantity.required'] = 'The quantity field is required.';                
-                                $this->messages['productOutProducts.' . $index . '.quantity.max'] = 'The quantity remaining is ' . $branchProduct->quantity . '.';
-                            }
-                        }
-                    }
+                    $this->rules['productOutProducts.' . $index . '.quantity'] = ['required', 'integer', 'max:' . $branchProduct->quantity];
+                    $this->messages['productOutProducts.' . $index . '.quantity.required'] = 'The quantity field is required.';                
+                    $this->messages['productOutProducts.' . $index . '.quantity.max'] = 'The quantity remaining is ' . $branchProduct->quantity . '.';
                 } else {
                     $this->rules['productOutProducts.' . $index . '.quantity'] = ['required', 'prohibited'];
                     $this->messages['productOutProducts.' . $index . '.quantity.required'] = 'The quantity field is required.';                
@@ -123,44 +94,6 @@ class ProductOutsForm extends Component
         }
     }
     
-    public function save()
-    {
-        $this->addValidationForQuantities();
-        
-        $this->validate();
-
-        $this->productOut->save();
-
-        $products = collect($this->productOutProducts)->mapWithKeys(function ($product) {
-            return [
-                $product['product_id'] => [
-                    'quantity' => $product['quantity'],
-                    'price_sold' => $product['price_sold'],
-                ]
-            ];
-        });
-
-        $this->productOut->products()->sync($products);
-
-        if ($this->type == 'edit') {
-            foreach ($this->productOut->products as $product) {
-                (new IncreaseQuantityAction())->execute(
-                    $this->productOut->branch_id, 
-                    $product->pivot->product_id, 
-                    $product->pivot->quantity);
-            }
-        }
-
-        foreach ($this->productOutProducts as $productOutProduct) {
-            (new DecreaseQuantityAction())->execute(
-                $this->productOut->branch_id, 
-                $productOutProduct['product_id'], 
-                $productOutProduct['quantity']);
-        }
-
-        return to_route('product-outs.index')->with('success', 'Product out saved successfully!');
-    }
-
     public function updatedProductOutProducts($value, $row)
     {
         $parts = explode('.', $row);
@@ -174,5 +107,35 @@ class ProductOutsForm extends Component
             $this->productOutProducts[$index]['price_sold'] = $product->price?? '';
             $this->productOutProducts[$index]['product_id'] = $value;
         }
+    }
+
+    public function save()
+    {
+        $this->addValidationForQuantities();
+
+        $this->validate();
+
+        $this->productOut->save();
+
+        $products = collect($this->productOutProducts)->mapWithKeys(function ($product) {
+            return [
+                $product['product_id'] => [
+                    'branch_id' => $this->productOut->branch_id,
+                    'quantity' => $product['quantity'],
+                    'price_sold' => $product['price_sold'],
+                ]
+            ];
+        });
+
+        $this->productOut->products()->sync($products);
+
+        foreach ($this->productOutProducts as $productOutProduct) {
+            (new DecreaseQuantityAction())->execute(
+                $this->productOut->branch_id, 
+                $productOutProduct['product_id'], 
+                $productOutProduct['quantity']);
+        }
+
+        return to_route('product-outs.index')->with('success', 'Product out created successfully!');
     }
 }

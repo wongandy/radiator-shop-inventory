@@ -24,7 +24,7 @@
                         type="text"
                         id="name"
                         name="name"
-                        placeholder="Search for stock number..."
+                        placeholder="Search"
                         />
         <select wire:model="searchBranch">
             <option value="">-- Select a branch --</option>
